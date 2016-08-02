@@ -36,30 +36,25 @@
 
 /* Settings *\
 \*==========*/
-var settings = {
-	"navigation": {
-		"newWindow": false
-	},
-	
-	"search": {
-		"engines": [
-			["http://www.google.com/search", "q", "Google", "sg"],
-		],
-		"focusSearch": false
-	},
-	
-	"clock": {
-		"showClock": true
-	},
 
-	"animation": {
-		"hideLinks": true
-	},
+function getSettings(){
+	var configutationDiv = $('#config').text();	
+	$('#config').empty();
+	var configutationArray = configutationDiv.split("\n");
+	var confArray = [];
 
-	"icons": {
-		"showIcons": true
+	for(i in configutationArray){
+		var line = jQuery.trim(configutationArray[i]);
+		
+		// If line is empty, skip
+		if(!line) continue;
+		var values = line.split(" = ");
+		confArray[values[0]] = values[1];
 	}
-};
+	console.log(confArray);
+
+	return(confArray);
+}
 
 /*  Clock  *\
 \*=========*/
@@ -101,15 +96,43 @@ function searchBox(url, name, placeholder) {
 
 $(document).ready(function() {
 
+	var settingsValue = getSettings();
+	var settings = {
+
+		"navigation": {
+			"newWindow": settingsValue.newWindow
+		},
+		
+		"search": {
+			"engines": [
+				["http://www.google.com/search", "q", "Google", "sg"],
+			],
+			"focusSearch": settingsValue.focusSearch
+		},
+		
+		"clock": {
+			"showClock": settingsValue.showClock
+		},
+
+		"animation": {
+			"hideLinks": settingsValue.hideLinks
+		},
+
+		"icons": {
+			"showIcons": settingsValue.showIcons
+		}
+	};
+
+
 	var shortcuts = {};
 	
 	/*  Get Links  *\
 	\*=============*/
-	var linkString = $('body').text();
+	var linkString = $('#url').text();
 
 	/*  Clear Page  *\
 	\*==============*/
-	$('body').empty();
+	$('#url').empty();
 
 	/*  Create Array from linkString  *\
 	\*================================*/
@@ -179,7 +202,7 @@ $(document).ready(function() {
 	/*  Add generated content to page  *\
 	\*=================================*/
 	html = html + '</ul></div>';
-	$('body').append(html);
+	$('#url').append(html);
 
 
 	/*  Animation Time!  *\
@@ -187,20 +210,21 @@ $(document).ready(function() {
 	
 	/*  Hide lists  *\
 	\*==============*/
-	// if (settings.animation.hideLinks) {
-	// 	$('ul').slideUp();
+	if (settings.animation.hideLinks) {
+	 	$('ul').slideUp();
 
-	// 	/*  Show on hover  *\
-	// 	\*=================*/
-	// 	$('.block').mouseenter(function() {
-	// 		$('ul', this).slideDown();
-	// 	});
+	 	/*  Show on hover  *\
+	 	\*=================*/
+	 	$('.block').mouseenter(function() {
+	 		$('ul', this).slideDown();
+	 	});
 
-	// 	/*  Hide on unhover  *\
-	// 	\*===================*/
-	// 	$('.block').mouseleave(function() {
-	// 		$('ul', this).slideUp();
-	// 	});
+	 	/*  Hide on unhover  *\
+	 	\*===================*/
+	 	$('.block').mouseleave(function() {
+	 		$('ul', this).slideUp();
+	 	});
+	}
 
 
 	/*  Search Engines  *\
